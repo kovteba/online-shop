@@ -1,6 +1,6 @@
 package kovteba.onlineshopapi.responce;
 
-import kovteba.onlineshopapi.entity.Product;
+import kovteba.onlineshopapi.entity.ProductEntity;
 import lombok.*;
 import org.springframework.http.HttpStatus;
 
@@ -13,6 +13,6 @@ public class ResponceProduct {
 
     private HttpStatus status;
 
-    private Product object;
+    private ProductEntity object;
 
 }

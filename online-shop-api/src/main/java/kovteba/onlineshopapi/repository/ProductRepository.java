@@ -1,12 +1,12 @@
 package kovteba.onlineshopapi.repository;
 
 
-import kovteba.onlineshopapi.entity.Product;
+import kovteba.onlineshopapi.entity.ProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
-    Product getProductById(Long id);
+    ProductEntity getProductById(Long id);
 
 }

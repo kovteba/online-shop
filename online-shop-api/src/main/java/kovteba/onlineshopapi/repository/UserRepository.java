@@ -1,19 +1,19 @@
 package kovteba.onlineshopapi.repository;
 
 
-import kovteba.onlineshopapi.entity.User;
-import kovteba.onlineshopapi.enums.RoleUser;
+import kovteba.onlineshopapi.entity.UserEntity;
+import kovteba.onlineshopcommon.enums.RoleUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
-    User findByPhoneNumber(String phoneNumber);
+    UserEntity findByPhoneNumber(String phoneNumber);
 
-    User findByRoleUser(RoleUser roleUser);
+    UserEntity findByRoleUser(RoleUser roleUser);
 
-    User findByEmail(String email);
+    UserEntity findByEmail(String email);
 
-    User getById(Long id);
+    UserEntity getById(Long id);
 
 
 }

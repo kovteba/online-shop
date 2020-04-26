@@ -1,6 +1,6 @@
 package kovteba.onlineshopapi.service;
 
-import kovteba.onlineshopapi.entity.Product;
+import kovteba.onlineshopapi.entity.ProductEntity;
 import kovteba.onlineshopapi.repository.ProductRepository;
 import kovteba.onlineshopapi.responce.ResponceProduct;
 import lombok.AllArgsConstructor;
@@ -14,17 +14,17 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
 
     @Override
-    public ResponceProduct addNewProduct(Product product) {
-        return new ResponceProduct(HttpStatus.CREATED, productRepository.save(product));
+    public ResponceProduct addNewProduct(ProductEntity productEntity) {
+        return new ResponceProduct(HttpStatus.CREATED, productRepository.save(productEntity));
     }
 
     @Override
     public ResponceProduct getProductById(Long id) {
         ResponceProduct responce = new ResponceProduct();
-        Product product = productRepository.getProductById(id);
-        if (product != null) {
+        ProductEntity productEntity = productRepository.getProductById(id);
+        if (productEntity != null) {
             responce.setStatus(HttpStatus.OK);
-            responce.setObject(product);
+            responce.setObject(productEntity);
         } else {
             responce.setStatus(HttpStatus.NO_CONTENT);
             responce.setObject(null);

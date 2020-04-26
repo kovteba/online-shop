@@ -4,7 +4,7 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import kovteba.onlineshopapi.entity.Product;
+import kovteba.onlineshopapi.entity.ProductEntity;
 import org.springframework.stereotype.Component;
 
 import java.io.FileNotFoundException;
@@ -20,9 +20,10 @@ public class GeneratePDF {
 //    @Value("${online.out.storage.pdf}")
 //    public String out;
 
-    public static String out = "online-shop-api/src/main/resources/pdf/";
+//    public static String out = "online-shop-api/src/main/resources/pdf/";
+    public static String out = "files/";
 
-    public String generateDPF(Map<Product, String> basket, String email){
+    public String generateDPF(Map<ProductEntity, String> basket, String email){
         Document document = new Document();
         String fileName = email + "Receipt.pdf";
         try {
@@ -65,16 +66,16 @@ public class GeneratePDF {
                 });
     }
 
-    private static void addRows(PdfPTable table, Map<Product, String> basket) {
+    private static void addRows(PdfPTable table, Map<ProductEntity, String> basket) {
         int index = 0;
-        for (Map.Entry<Product, String> entry : basket.entrySet()){
-            Product product = entry.getKey();
+        for (Map.Entry<ProductEntity, String> entry : basket.entrySet()){
+            ProductEntity productEntity = entry.getKey();
             table.addCell(String.valueOf(++index));
-            table.addCell(product.getBrand() + " " + product.getModel());
-            table.addCell(product.getEan());
-            table.addCell(String.valueOf(product.getPrice()));
+            table.addCell(productEntity.getBrand() + " " + productEntity.getModel());
+            table.addCell(productEntity.getEan());
+            table.addCell(String.valueOf(productEntity.getPrice()));
             table.addCell(entry.getValue());
-            Long price = Long.parseLong(entry.getValue()) * product.getPrice();
+            Long price = Long.parseLong(entry.getValue()) * productEntity.getPrice();
             totalPrice += price;
             table.addCell(String.valueOf(price));
         }

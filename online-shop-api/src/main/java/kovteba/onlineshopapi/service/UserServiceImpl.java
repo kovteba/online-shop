@@ -1,21 +1,23 @@
 package kovteba.onlineshopapi.service;
 
-import kovteba.onlineshopapi.entity.Product;
-import kovteba.onlineshopapi.entity.User;
-import kovteba.onlineshopapi.enums.RoleUser;
+import kovteba.onlineshopapi.entity.ProductEntity;
+import kovteba.onlineshopapi.entity.UserEntity;
 import kovteba.onlineshopapi.repository.UserRepository;
 import kovteba.onlineshopapi.responce.Responce;
 import kovteba.onlineshopapi.responce.ResponceProduct;
 import kovteba.onlineshopapi.util.BCryptUtil;
+import kovteba.onlineshopcommon.enums.RoleUser;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Map;
 
 @Service
+@Transactional
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
@@ -24,18 +26,18 @@ public class UserServiceImpl implements UserService {
     private final ProductService productService;
 
     @Override
-    public Responce addNewUser(User user) {
-        user.setPassword(BCryptUtil.encrypt(user.getPassword()));
-        return new Responce(HttpStatus.CREATED, userRepository.save(user));
+    public Responce addNewUser(UserEntity userEntity) {
+        userEntity.setPassword(BCryptUtil.encrypt(userEntity.getPassword()));
+        return new Responce(HttpStatus.CREATED, userRepository.save(userEntity));
     }
 
     @Override
     public Responce getUserByPhoneNumber(String phoneNUmber) {
         Responce responce = new Responce();
-        User user = userRepository.findByPhoneNumber(phoneNUmber);
-        if (user != null) {
+        UserEntity userEntity = userRepository.findByPhoneNumber(phoneNUmber);
+        if (userEntity != null) {
             responce.setStatus(HttpStatus.OK);
-            responce.setObject(user);
+            responce.setObject(userEntity);
         } else {
             responce.setStatus(HttpStatus.NO_CONTENT);
             responce.setObject(null);
@@ -46,10 +48,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Responce getUserByRole(RoleUser roleUser) {
         Responce responce = new Responce();
-        User user = userRepository.findByRoleUser(roleUser);
-        if (user != null) {
+        UserEntity userEntity = userRepository.findByRoleUser(roleUser);
+        if (userEntity != null) {
             responce.setStatus(HttpStatus.OK);
-            responce.setObject(user);
+            responce.setObject(userEntity);
         } else {
             responce.setStatus(HttpStatus.NO_CONTENT);
             responce.setObject(null);
@@ -59,18 +61,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails authentication(String email) {
-        User user = userRepository.findByEmail(email);
+        UserEntity userEntity = userRepository.findByEmail(email);
         return new org.springframework.security.core.userdetails
-                .User(user.getEmail(), user.getPassword(), new ArrayList<>());
+                .User(userEntity.getEmail(), userEntity.getPassword(), new ArrayList<>());
     }
 
     @Override
     public Responce getUserByEmail(String email) {
         Responce responce = new Responce();
-        User user = userRepository.findByEmail(email);
-        if (user != null) {
+        UserEntity userEntity = userRepository.findByEmail(email);
+        if (userEntity != null) {
             responce.setStatus(HttpStatus.OK);
-            responce.setObject(user);
+            responce.setObject(userEntity);
         } else {
             responce.setStatus(HttpStatus.NO_CONTENT);
             responce.setObject(null);
@@ -81,10 +83,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Responce getUserById(Long id) {
         Responce responce = new Responce();
-        User user = userRepository.getById(id);
-        if (user != null) {
+        UserEntity userEntity = userRepository.getById(id);
+        if (userEntity != null) {
             responce.setStatus(HttpStatus.OK);
-            responce.setObject(user);
+            responce.setObject(userEntity);
         } else {
             responce.setStatus(HttpStatus.NO_CONTENT);
             responce.setObject(null);
@@ -94,12 +96,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Responce addToBasketUser(Long id, Long productId, String count) {
-        User user = (User)getUserById(id).getObject();
-        Map<Product, String> mapProduct = user.getBasket();
+        UserEntity userEntity = (UserEntity)getUserById(id).getObject();
+        Map<ProductEntity, String> mapProduct = userEntity.getBasket();
         ResponceProduct responce = productService.getProductById(productId);
-        mapProduct.put((Product) responce.getObject(), count);
-        user.setBasket(mapProduct);
-        return new Responce(HttpStatus.CREATED, userRepository.save(user));
+        mapProduct.put((ProductEntity) responce.getObject(), count);
+        userEntity.setBasket(mapProduct);
+        return new Responce(HttpStatus.CREATED, userRepository.save(userEntity));
     }
 
 }

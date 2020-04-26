@@ -1,0 +1,8 @@
+kovteba/onlineshopcommon/pojo/Recovery.class
+kovteba/onlineshopcommon/model/JwtResponse.class
+kovteba/onlineshopcommon/pojo/Product.class
+kovteba/onlineshopcommon/enums/ProductType.class
+kovteba/onlineshopcommon/model/RecoveryPass.class
+kovteba/onlineshopcommon/model/JwtRequest.class
+kovteba/onlineshopcommon/enums/RoleUser.class
+kovteba/onlineshopcommon/pojo/User.class

@@ -1,14 +1,14 @@
 package kovteba.onlineshopapi.service;
 
 
-import kovteba.onlineshopapi.entity.User;
-import kovteba.onlineshopapi.enums.RoleUser;
+import kovteba.onlineshopapi.entity.UserEntity;
 import kovteba.onlineshopapi.responce.Responce;
+import kovteba.onlineshopcommon.enums.RoleUser;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface UserService {
 
-    Responce addNewUser(User user);
+    Responce addNewUser(UserEntity userEntity);
 
     Responce getUserByPhoneNumber(String phoneNUmber);
 

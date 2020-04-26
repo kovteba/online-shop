@@ -1,9 +1,11 @@
 package kovteba.onlineshopapi.service;
 
-import kovteba.onlineshopapi.entity.User;
+import kovteba.onlineshopapi.entity.UserEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Service
@@ -29,12 +33,17 @@ public class JwtUserDetailsService implements UserDetailsService {
 
 		log.info("loadUserByUsername, " + this.getClass());
 
-		User user = (User)userService.getUserByEmail(email).getObject();
-		if (user == null) {
+		UserEntity userEntity = (UserEntity)userService.getUserByEmail(email).getObject();
+
+		if (userEntity == null) {
 			throw new UsernameNotFoundException("User not found with email: " + email);
 		}
-		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
-				new ArrayList<>());
+
+		Set<GrantedAuthority> roles = new HashSet();
+		roles.add(new SimpleGrantedAuthority(userEntity.getRoleUser().getRoleValue()));
+
+		return new org.springframework.security.core.userdetails.User(userEntity.getEmail(), userEntity.getPassword(),
+				roles);
 	}
 
 

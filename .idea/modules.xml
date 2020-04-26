@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/online-shop.iml" filepath="$PROJECT_DIR$/online-shop.iml" />
       <module fileurl="file://$PROJECT_DIR$/online-shop-api/online-shop-api.iml" filepath="$PROJECT_DIR$/online-shop-api/online-shop-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/online-shop-common/online-shop-common.iml" filepath="$PROJECT_DIR$/online-shop-common/online-shop-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/online-shop-web/online-shop-web.iml" filepath="$PROJECT_DIR$/online-shop-web/online-shop-web.iml" />
     </modules>
   </component>
 </project>

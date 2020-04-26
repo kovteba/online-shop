@@ -1,22 +1,20 @@
 package kovteba.onlineshopapi.controller;
 
-import kovteba.onlineshopapi.entity.Recovery;
-import kovteba.onlineshopapi.entity.User;
-import kovteba.onlineshopapi.enums.RoleUser;
-import kovteba.onlineshopapi.model.JwtRequest;
-import kovteba.onlineshopapi.model.JwtResponse;
+import kovteba.onlineshopapi.entity.RecoveryEntity;
+import kovteba.onlineshopapi.entity.UserEntity;
+import kovteba.onlineshopapi.mapper.UserMapper;
 import kovteba.onlineshopapi.responce.Responce;
 import kovteba.onlineshopapi.service.EmailService;
 import kovteba.onlineshopapi.service.JwtUserDetailsService;
 import kovteba.onlineshopapi.service.RecoveryService;
 import kovteba.onlineshopapi.service.UserService;
 import kovteba.onlineshopapi.util.JwtTokenUtil;
-import kovteba.onlineshopapi.util.ResponceType;
 import kovteba.onlineshopapi.util.UUIDRandom;
+import kovteba.onlineshopcommon.enums.RoleUser;
+import kovteba.onlineshopcommon.pojo.User;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,30 +23,35 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import kovteba.onlineshopcommon.model.*;
+
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-//@CrossOrigin
-@AllArgsConstructor
 public class JwtAuthenticationController {
 
 	private final Logger log = LoggerFactory.getLogger(JwtAuthenticationController.class);
 
-	@Autowired
 	private final AuthenticationManager authenticationManager;
-
-	@Autowired
 	private final JwtTokenUtil jwtTokenUtil;
-
-	@Autowired
-	private final JwtUserDetailsService userDetailsService;
-
 	private final UserService userService;
-
 	private final RecoveryService recoveryService;
-
 	private final EmailService emailService;
+	private final UserMapper userMapper;
 
+	public JwtAuthenticationController(AuthenticationManager authenticationManager,
+									   JwtTokenUtil jwtTokenUtil,
+									   UserService userService,
+									   RecoveryService recoveryService,
+									   EmailService emailService,
+									   UserMapper userMapper) {
+		this.authenticationManager = authenticationManager;
+		this.jwtTokenUtil = jwtTokenUtil;
+		this.userService = userService;
+		this.recoveryService = recoveryService;
+		this.emailService = emailService;
+		this.userMapper = userMapper;
+	}
 
 	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
 	public String createAuthenticationToken(@RequestBody JwtRequest authenticationRequest, HttpServletRequest req) throws Exception {
@@ -62,7 +65,6 @@ public class JwtAuthenticationController {
 		JwtResponse jwtResponse = new JwtResponse(token);
 		req.getSession().setAttribute("Authorization", jwtResponse.getToken());
 
-		System.out.println("jwtResponse : " + jwtResponse.getToken());
 		return jwtResponse.getToken();
 
 //		final String token = jwtTokenUtil.generateToken(userDetails);
@@ -70,22 +72,22 @@ public class JwtAuthenticationController {
 	}
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public ResponseEntity<ResponceType> addNewUser(@RequestBody User user) {
+	public ResponseEntity<User> addNewUser(@RequestBody UserEntity userEntity) {
 
-		System.out.println("!!!!!!!!!!!! : " + user.toString());
+		System.out.println("!!!!!!!!!!!! : " + userEntity.toString());
 
 		log.info("addNewUser, " + this.getClass());
-		user.setRoleUser(RoleUser.USER);
-		Responce responce = userService.addNewUser(user);
-		return ResponseEntity.status(responce.getStatus()).body(responce.getObject());
+		userEntity.setRoleUser(RoleUser.USER);
+		Responce responce = userService.addNewUser(userEntity);
+		return ResponseEntity.status(responce.getStatus()).body(userMapper.userEntityToUser((UserEntity) responce.getObject()));
 	}
 
 	@PostMapping("/createSecretToken")
 	public void createSecretToken(@RequestBody String email){
-		User user = (User)userService.getUserByEmail(email).getObject();
-		if (user != null){
+		UserEntity userEntity = (UserEntity)userService.getUserByEmail(email).getObject();
+		if (userEntity != null){
 			String secretToken = UUIDRandom.generateToken();
-			recoveryService.addNewRecovery(new Recovery(email, secretToken));
+			recoveryService.addNewRecovery(new RecoveryEntity(email, secretToken));
 			emailService.sendSimpleMessage("kovteba@gmail.com", "RECOVERY PASSWORD", secretToken);
 		}
 	}

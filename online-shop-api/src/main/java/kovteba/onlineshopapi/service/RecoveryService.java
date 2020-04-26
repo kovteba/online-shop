@@ -1,11 +1,11 @@
 package kovteba.onlineshopapi.service;
 
-import kovteba.onlineshopapi.entity.Recovery;
+import kovteba.onlineshopapi.entity.RecoveryEntity;
 
 public interface RecoveryService {
 
-    void addNewRecovery(Recovery recovery);
+    void addNewRecovery(RecoveryEntity recoveryEntity);
 
-    Recovery getRecoveryByEmail(String email);
+    RecoveryEntity getRecoveryByEmail(String email);
 
 }

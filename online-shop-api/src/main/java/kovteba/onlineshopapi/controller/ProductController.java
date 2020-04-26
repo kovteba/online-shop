@@ -1,6 +1,6 @@
 package kovteba.onlineshopapi.controller;
 
-import kovteba.onlineshopapi.entity.Product;
+import kovteba.onlineshopapi.entity.ProductEntity;
 import kovteba.onlineshopapi.responce.ResponceProduct;
 import kovteba.onlineshopapi.service.ProductService;
 import lombok.AllArgsConstructor;
@@ -19,14 +19,14 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<Product> addNewProduct(@RequestHeader(value="Authorization") String token, @RequestBody Product product) {
+    public ResponseEntity<ProductEntity> addNewProduct(@RequestHeader(value="Authorization") String token, @RequestBody ProductEntity productEntity) {
         log.info("addNewComputer, " + this.getClass());
-        ResponceProduct responce = productService.addNewProduct(product);
+        ResponceProduct responce = productService.addNewProduct(productEntity);
         return ResponseEntity.status(responce.getStatus()).body(responce.getObject());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@RequestHeader(value="Authorization") String token, @PathVariable Long id){
+    public ResponseEntity<ProductEntity> getProductById(@RequestHeader(value="Authorization") String token, @PathVariable Long id){
         log.info("getComouterById, " + this.getClass());
         ResponceProduct responce = productService.getProductById(id);
         return ResponseEntity.status(responce.getStatus()).body(responce.getObject());

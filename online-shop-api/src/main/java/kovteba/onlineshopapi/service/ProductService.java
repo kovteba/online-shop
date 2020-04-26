@@ -1,12 +1,12 @@
 package kovteba.onlineshopapi.service;
 
 
-import kovteba.onlineshopapi.entity.Product;
+import kovteba.onlineshopapi.entity.ProductEntity;
 import kovteba.onlineshopapi.responce.ResponceProduct;
 
 public interface ProductService {
 
-    ResponceProduct addNewProduct(Product product);
+    ResponceProduct addNewProduct(ProductEntity productEntity);
 
     ResponceProduct getProductById(Long id);
 
