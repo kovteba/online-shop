@@ -15,5 +15,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     UserEntity getById(Long id);
 
+    UserEntity deleteByEmail(String email);
+
 
 }
