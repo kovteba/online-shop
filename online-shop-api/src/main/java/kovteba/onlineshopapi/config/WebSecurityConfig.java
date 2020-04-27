@@ -25,8 +25,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+//    @Autowired
+//    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
@@ -40,6 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // user for matching credentials
         // Use BCryptPasswordEncoder
         auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
+
     }
 
     @Bean
@@ -54,7 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public UserDetailsService getUserDetailsService(){
+    public UserDetailsService getUserDetailsService() {
         return new JwtUserDetailsService();
     }
 
@@ -65,11 +66,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .authorizeRequests()
                 .antMatchers("/register").permitAll()
-                .antMatchers("/recoveryPass").permitAll()
+                .antMatchers("/resetPass").permitAll()
                 .antMatchers("/createSecretToken").permitAll()
                 .antMatchers("/authenticate").permitAll()
-                .antMatchers("localhost:8080").permitAll()
-                .antMatchers("private").hasRole("ADMIN")
+                .antMatchers("/private").hasRole("ADMIN")
+
+                .antMatchers("/user/pic").permitAll()
+                .antMatchers("/user/download").permitAll()
+                .antMatchers("/user/show").permitAll()
+                .antMatchers("/product/addinfo/**").permitAll()
+                .antMatchers("/product/**").permitAll()
+
                 .antMatchers(
                         HttpMethod.GET,
                         "/",
@@ -85,17 +92,44 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 ).permitAll()
 
                 // all other requests need to be authenticated
-                .anyRequest().authenticated().and()
+                .anyRequest()
+                .authenticated();
 
-                // make sure we use stateless session; session won't be used to
-                // store user's state.
+//        httpSecurity.formLogin()
+                // указываем страницу с формой логина
+//                .loginPage("/authenticate")
+                // указываем action с формы логина
+//                .loginProcessingUrl("/j_spring_security_check")
+                // указываем URL при неудачном логине
+//                .failureUrl("/login?error")
+                // Указываем параметры логина и пароля с формы логина
+//                .usernameParameter("j_username")
+//                .passwordParameter("j_password")
+                // даем доступ к форме логина всем
+//                .permitAll();
+
+//        httpSecurity.formLogin()
+//                // указываем страницу с формой логина
+//                .loginPage("/login")
+//                // указываем action с формы логина
+//                .loginProcessingUrl("/j_spring_security_check")
+//                // указываем URL при неудачном логине
+//                .failureUrl("/login?error")
+//                // Указываем параметры логина и пароля с формы логина
+//                .usernameParameter("j_username")
+//                .passwordParameter("j_password")
+//                // даем доступ к форме логина всем
+//                .permitAll();
+
+        // make sure we use stateless session; session won't be used to
+        // store user's state.
                 /*.exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)*/;
-
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)*/
         // Add a filter to validate the tokens with every request
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
 }
+
