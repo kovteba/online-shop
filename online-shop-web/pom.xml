@@ -20,24 +20,24 @@
 
   <profiles>
     <profile>
-      <id>dev-api</id>
+      <id>dev-web</id>
       <properties>
-        <activatedProperties>dev-api</activatedProperties>
+        <activatedProperties>dev-web</activatedProperties>
       </properties>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
     </profile>
     <profile>
-      <id>local-api</id>
+      <id>local-web</id>
       <properties>
-        <activatedProperties>local-api</activatedProperties>
+        <activatedProperties>local-web</activatedProperties>
       </properties>
     </profile>
     <profile>
-      <id>prod-api</id>
+      <id>prod-web</id>
       <properties>
-        <activatedProperties>prod-api</activatedProperties>
+        <activatedProperties>prod-web</activatedProperties>
       </properties>
     </profile>
   </profiles>

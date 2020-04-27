@@ -5,14 +5,13 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecoveryPass {
+public class ProductInfo {
 
-    private String email;
+    private String key;
 
-    private String secretToken;
-
-    private String newPass;
+    private String value;
 
 }
