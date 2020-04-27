@@ -8,4 +8,6 @@ public interface RecoveryService {
 
     RecoveryEntity getRecoveryByEmail(String email);
 
+    void deleteSecretTokenByEmail(String email);
+
 }

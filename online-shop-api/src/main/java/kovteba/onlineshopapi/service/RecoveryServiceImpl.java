@@ -20,4 +20,9 @@ public class RecoveryServiceImpl implements RecoveryService {
     public RecoveryEntity getRecoveryByEmail(String email) {
         return recoveryRepository.getByEmail(email);
     }
+
+    @Override
+    public void deleteSecretTokenByEmail(String email) {
+        recoveryRepository.delete(recoveryRepository.getByEmail(email));
+    }
 }
