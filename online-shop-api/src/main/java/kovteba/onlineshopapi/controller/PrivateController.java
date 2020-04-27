@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping
+@RequestMapping("/private")
 public class PrivateController {
 
 
-    @GetMapping("/private")
+    @GetMapping
     public String getPrivate(@RequestHeader(value = "Authorization") String token){
         return "PRIVATE";
     }
