@@ -38,6 +38,19 @@ public class UserMapperImpl implements UserMapper {
 
     @Override
     public UserEntity userToUserEntity(User user) {
-        return null;
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(user.getId());
+        userEntity.setEmail(user.getEmail());
+        userEntity.setFirstName(user.getFirstName());
+        userEntity.setLastName(user.getLastName());
+        userEntity.setPhoneNumber(user.getPhoneNumber());
+        userEntity.setPassword(user.getPassword());
+        Map<ProductEntity, String> basket = new HashMap<>();
+        for (Map.Entry<Product, String> entry : user.getBasket().entrySet()){
+            basket.put(productMapper.productToProductEntity(entry.getKey()), entry.getValue());
+        }
+        userEntity.setBasket(basket);
+        userEntity.setRoleUser(user.getRoleUser());
+        return userEntity;
     }
 }
