@@ -2,12 +2,18 @@ package kovteba.onlineshopapi.service;
 
 
 import kovteba.onlineshopapi.entity.ProductEntity;
-import kovteba.onlineshopapi.responce.ResponceProduct;
+import kovteba.onlineshopapi.responce.Responce;
 
 public interface ProductService {
 
-    ResponceProduct addNewProduct(ProductEntity productEntity);
+    Responce addNewProduct(ProductEntity productEntity);
 
-    ResponceProduct getProductById(Long id);
+    Responce getProductById(Long id);
+
+    Responce addInfoAboutProduct(Long id, String key, String value);
+
+    Responce addPicForProduct(Long id, String fileName);
+
+    Responce deletePicForProduct(Long id, String fileName);
 
 }
