@@ -5,10 +5,10 @@ import java.util.List;
 
 public enum RoleUser {
 
-    USER("USER"),
-    ADMIN("ADMIN");
+    USER("ROLE_USER"),
+    ADMIN("ROLE_ADMIN");
 
-    private String roleValue;
+    private final String roleValue;
 
     RoleUser(String roleValue) {
         this.roleValue = roleValue;
@@ -23,8 +23,7 @@ public enum RoleUser {
     }
 
     public static RoleUser findRole(String roleString){
-        RoleUser role = null;
-        return role = getListRole()
+        return getListRole()
                 .stream()
                 .filter(s -> s.getRoleValue().equals(roleString))
                 .findAny()
