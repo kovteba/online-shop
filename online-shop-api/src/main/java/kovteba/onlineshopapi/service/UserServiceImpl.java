@@ -6,24 +6,29 @@ import kovteba.onlineshopapi.repository.UserRepository;
 import kovteba.onlineshopapi.responce.Responce;
 import kovteba.onlineshopapi.util.BCryptUtil;
 import kovteba.onlineshopcommon.enums.RoleUser;
-import kovteba.onlineshopcommon.pojo.User;
-import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 @Transactional
-@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-
     private final ProductService productService;
+
+    public UserServiceImpl(UserRepository userRepository,
+                           ProductService productService) {
+        this.userRepository = userRepository;
+        this.productService = productService;
+    }
 
     @Override
     public Responce addNewUser(UserEntity userEntity) {
@@ -40,7 +45,7 @@ public class UserServiceImpl implements UserService {
             responce.setObject(userEntity);
         } else {
             responce.setStatus(HttpStatus.BAD_REQUEST);
-            responce.setObject("USER WITH " + phoneNUmber + " NOT FOUND");
+            responce.setObject(null);
         }
         return responce;
     }
@@ -54,7 +59,7 @@ public class UserServiceImpl implements UserService {
             responce.setObject(userEntity);
         } else {
             responce.setStatus(HttpStatus.BAD_REQUEST);
-            responce.setObject("USER WITH " + roleUser.getRoleValue() + " NOT FOUND");
+            responce.setObject(null);
         }
         return responce;
     }
@@ -62,8 +67,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetails authentication(String email) {
         UserEntity userEntity = userRepository.findByEmail(email);
+        Set<GrantedAuthority> roles = new HashSet();
+        roles.add(new SimpleGrantedAuthority(userEntity.getRoleUser().getRoleValue()));
         return new org.springframework.security.core.userdetails
-                .User(userEntity.getEmail(), userEntity.getPassword(), new ArrayList<>());
+                .User(userEntity.getEmail(), userEntity.getPassword(), roles);
     }
 
     @Override
@@ -75,7 +82,7 @@ public class UserServiceImpl implements UserService {
             responce.setObject(userEntity);
         } else {
             responce.setStatus(HttpStatus.BAD_REQUEST);
-            responce.setObject("USER WITH " + email + " NOT FOUND");
+            responce.setObject(null);
         }
         return responce;
     }
@@ -89,7 +96,7 @@ public class UserServiceImpl implements UserService {
             responce.setObject(userEntity);
         } else {
             responce.setStatus(HttpStatus.BAD_REQUEST);
-            responce.setObject("USER WITH " + id + " NOT FOUND");
+            responce.setObject(null);
         }
         return responce;
     }
@@ -110,18 +117,17 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-
     @Override
     public Responce deleteUserByEmail(String email) {
         Responce responce = new Responce();
         UserEntity userEntity = userRepository.findByEmail(email);
         if (userEntity == null){
             responce.setStatus(HttpStatus.BAD_REQUEST);
-            responce.setObject("USER WITH " + email + " NOT FOUND");
+            responce.setObject(null);
         } else {
             if (userRepository.deleteByEmail(email) == null){
                 responce.setStatus(HttpStatus.OK);
-                responce.setObject("USER WITH " + email + " DELETED SUCCESSFULLY");
+                responce.setObject(null);
             }
         }
         return responce;

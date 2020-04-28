@@ -6,6 +6,7 @@ import kovteba.onlineshopapi.responce.Responce;
 import kovteba.onlineshopapi.service.ProductService;
 import kovteba.onlineshopcommon.model.ProductInfo;
 import kovteba.onlineshopcommon.pojo.Product;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,29 +43,38 @@ public class ProductController {
         this.productMapper = productMapper;
     }
 
-    @PostMapping
-    public ResponseEntity<Product> addNewProduct(@RequestHeader(value = "Authorization") String token, @RequestBody Product product) {
+    @PostMapping("/addNewProduct")
+    public ResponseEntity<Product> addNewProduct(@RequestHeader(value = "Authorization") String token,
+                                                 @RequestBody Product product) {
         log.info("addNewProduct, " + this.getClass());
         Responce responce = productService.addNewProduct(productMapper.productToProductEntity(product));
-        return ResponseEntity.status(responce.getStatus()).body(productMapper.productEntityToProduct((ProductEntity) responce.getObject()));
+        return ResponseEntity.status(responce.getStatus())
+                .body(productMapper.productEntityToProduct((ProductEntity) responce.getObject()));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@RequestHeader(value = "Authorization") String token, @PathVariable Long id) {
+    @GetMapping("/get/{id}")
+    public ResponseEntity<Product> getProductById(@RequestHeader(value = "Authorization") String token,
+                                                  @PathVariable Long id) {
         log.info("getProductById, " + this.getClass());
         Responce responce = productService.getProductById(id);
-        return ResponseEntity.status(responce.getStatus()).body(productMapper.productEntityToProduct((ProductEntity) responce.getObject()));
+        return ResponseEntity.status(responce.getStatus())
+                .body(productMapper.productEntityToProduct((ProductEntity) responce.getObject()));
     }
 
-    @PostMapping("/addinfo/{idProduct}")
-    public ResponseEntity<Product> addInfoAboutProduct(@PathVariable Long idProduct, @RequestBody ProductInfo productInfo){
+    @PostMapping("/addInfo/{idProduct}")
+    public ResponseEntity<Product> addInfoAboutProduct(@RequestHeader(value = "Authorization") String token,
+                                                       @PathVariable Long idProduct,
+                                                       @RequestBody ProductInfo productInfo) {
         log.info("addInfoAboutProduct, " + this.getClass());
         Responce responce = productService.addInfoAboutProduct(idProduct, productInfo.getKey(), productInfo.getValue());
-        return ResponseEntity.status(responce.getStatus()).body(productMapper.productEntityToProduct((ProductEntity) responce.getObject()));
+        return ResponseEntity.status(responce.getStatus())
+                .body(productMapper.productEntityToProduct((ProductEntity) responce.getObject()));
     }
 
-    @PostMapping("/addpic/{idProduct}")
-    public ResponseEntity<Product> addPicForProduct(@PathVariable Long idProduct, @RequestParam("file") MultipartFile file){
+    @PostMapping("/addPic/{idProduct}")
+    public ResponseEntity<Product> addPicForProduct(@RequestHeader(value = "Authorization") String token,
+                                                    @PathVariable Long idProduct,
+                                                    @RequestParam("file") MultipartFile file) {
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         Path path = Paths.get(directory + fileName);
         try {
@@ -73,37 +83,48 @@ public class ProductController {
             e.printStackTrace();
         }
         Responce responce = productService.addPicForProduct(idProduct, fileName);
-        return ResponseEntity.status(responce.getStatus()).body(productMapper.productEntityToProduct((ProductEntity) responce.getObject()));
+        return ResponseEntity.status(responce.getStatus())
+                .body(productMapper.productEntityToProduct((ProductEntity) responce.getObject()));
     }
 
-    @GetMapping("/deletepic/{idProduct}")
-    public ResponseEntity<Product> deletePicForProduct(@PathVariable Long idProduct, @RequestBody String fileName){
+    @GetMapping("/deletePic/{idProduct}")
+    public ResponseEntity<Product> deletePicForProduct(@RequestHeader(value = "Authorization") String token,
+                                                       @PathVariable Long idProduct,
+                                                       @RequestBody String fileName) {
         Responce responce = productService.deletePicForProduct(idProduct, fileName);
-        return ResponseEntity.status(responce.getStatus()).body(productMapper.productEntityToProduct((ProductEntity) responce.getObject()));
+        return ResponseEntity.status(responce.getStatus())
+                .body(productMapper.productEntityToProduct((ProductEntity) responce.getObject()));
     }
 
+
+    ///////////////////////
     @GetMapping(
             value = "/pic/{idProduct}",
             produces = MediaType.IMAGE_JPEG_VALUE)
-    public void getPic(@PathVariable Long idProduct,HttpServletResponse response) throws IOException {
+    public void getPic(@RequestHeader(value = "Authorization") String token,
+                       @PathVariable Long idProduct,
+                       HttpServletResponse response) throws IOException {
+
         ProductEntity productEntity = (ProductEntity) productService.getProductById(idProduct).getObject();
+//        File file = new File(directory + "IMG_1050.JPEG");
+//        InputStream targetStream = new DataInputStream(new FileInputStream(file));
+//        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+//        IOUtils.copy(targetStream, response.getOutputStream());
+
         List<String> listPic = productEntity.getListPic();
         List<File> pic = new ArrayList<>();
-        for (String s : listPic){
+        for (String s : listPic) {
             pic.add(new File(directory + s));
         }
-        for (File file : pic){
-            System.out.println(file.getAbsoluteFile());
-            System.out.println(file.getName());
+
+        InputStream[] targetStream = new InputStream[listPic.size()];
+        for (int i = 0; i < listPic.size(); i++) {
+            File file = new File(directory + listPic.get(i));
+            targetStream[i] = new DataInputStream(new FileInputStream(file));
+            response.setContentType(MediaType.IMAGE_JPEG_VALUE);
         }
-//        InputStream[] targetStream = new InputStream[listPic.size()];
-//        for (int i = 0; i < listPic.size(); i++) {
-//            File file = new File(directory + listPic.get(i));
-//            targetStream[i] = new DataInputStream(new FileInputStream(file));
-//            response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-//        }
-//        for (InputStream inputStream : targetStream) {
-//            IOUtils.copy(inputStream, response.getOutputStream());
-//        }
+        for (InputStream inputStream : targetStream) {
+            IOUtils.copy(inputStream, response.getOutputStream());
+        }
     }
 }

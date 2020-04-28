@@ -2,10 +2,18 @@ package kovteba.onlineshopapi.mapper;
 
 import kovteba.onlineshopapi.entity.ProductEntity;
 import kovteba.onlineshopcommon.pojo.Product;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
-public class ProductMapperImpl implements ProductMapper{
+public class ProductMapperImpl implements ProductMapper {
+
+    @Value("${online.out.storage.img}")
+    private String directory;
 
     @Override
     public Product productEntityToProduct(ProductEntity productEntity) {
@@ -15,7 +23,12 @@ public class ProductMapperImpl implements ProductMapper{
         product.setModel(productEntity.getModel());
         product.setPrice(productEntity.getPrice());
         product.setEan(productEntity.getEan());
-        product.setListPic(productEntity.getListPic());
+        List<String> picNameList = productEntity.getListPic();
+        List<File> listFilePic = new ArrayList<>();
+        for (String fileName : picNameList) {
+            listFilePic.add(new File(directory + fileName));
+        }
+        product.setListPic(listFilePic);
         product.setProductInfo(productEntity.getProductInfo());
         product.setProductType(productEntity.getProductType());
         return product;
@@ -29,7 +42,14 @@ public class ProductMapperImpl implements ProductMapper{
         productEntity.setModel(product.getModel());
         productEntity.setPrice(product.getPrice());
         productEntity.setEan(product.getEan());
-        productEntity.setListPic(product.getListPic());
+        List<String> picNameList = new ArrayList<>();
+        List<File> listFilePic = product.getListPic();
+        if (listFilePic.size() != 0){
+            for (File file : listFilePic){
+                picNameList.add(file.getName());
+            }
+        }
+        productEntity.setListPic(picNameList);
         productEntity.setProductInfo(product.getProductInfo());
         productEntity.setProductType(product.getProductType());
         return productEntity;

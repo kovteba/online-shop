@@ -4,6 +4,7 @@ import com.itextpdf.text.*;
 import kovteba.onlineshopapi.entity.UserEntity;
 import kovteba.onlineshopapi.mapper.UserMapper;
 import kovteba.onlineshopapi.responce.Responce;
+import kovteba.onlineshopapi.service.BanService;
 import kovteba.onlineshopapi.service.EmailService;
 import kovteba.onlineshopapi.service.UserService;
 import kovteba.onlineshopapi.util.GeneratePDF;
@@ -38,25 +39,24 @@ public class UserController {
     private final Logger log = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
-
     private final JwtTokenUtil jwtTokenUtil;
-
     private final GeneratePDF generatePDF;
-
     private final EmailService emailService;
-
     private final UserMapper userMapper;
+    private final BanService banService;
 
     public UserController(UserService userService,
                           JwtTokenUtil jwtTokenUtil,
                           GeneratePDF generatePDF,
                           EmailService emailService,
-                          UserMapper userMapper) {
+                          UserMapper userMapper,
+                          BanService banService) {
         this.userService = userService;
         this.jwtTokenUtil = jwtTokenUtil;
         this.generatePDF = generatePDF;
         this.emailService = emailService;
         this.userMapper = userMapper;
+        this.banService = banService;
     }
 
     @GetMapping("/role")
@@ -98,6 +98,41 @@ public class UserController {
                 .body(userMapper.userEntityToUser((UserEntity) responce.getObject()));
     }
 
+    @GetMapping(
+            value = "/genRec/{userId}",
+            produces = MediaType.APPLICATION_PDF_VALUE)
+    public void generateReceipt(@RequestHeader(value = "Authorization") String token,
+                                @PathVariable Long userId,
+                                HttpServletResponse response) throws IOException {
+        String email = jwtTokenUtil.getEmailFromToken(token);
+        UserEntity userEntity = (UserEntity) userService.getUserById(userId).getObject();
+        if (userEntity != null && email.equals(userEntity.getEmail())){
+            String fileName = generatePDF.generateDPF(userEntity.getBasket(), userEntity.getEmail());
+            File file = new File(directory + fileName);
+            InputStream targetStream = new DataInputStream(new FileInputStream(file));
+            response.setContentType(MediaType.APPLICATION_PDF_VALUE);
+            IOUtils.copy(targetStream, response.getOutputStream());
+        }
+    }
+
+    @GetMapping("/ban/{email}")
+    public ResponseEntity<?> banUserByEmail(@RequestHeader(value = "Authorization") String token,
+                               @PathVariable String email){
+        Responce responce = banService.banUserByEmail(email);;
+        return ResponseEntity.status(responce.getStatus()).body(responce.getObject());
+    }
+
+    @GetMapping("/unBan/{email}")
+    public ResponseEntity<?> unBanUserByEmail(@RequestHeader(value = "Authorization") String token,
+                                 @PathVariable String email){
+        Responce responce = banService.unBanUserByEmail(email);
+        return ResponseEntity.status(responce.getStatus()).body(responce.getObject());
+    }
+
+
+
+    ////////////////////////////////////////////////////////////////////////////
+
     @GetMapping("/sendEmail")
     public ResponseEntity<String> sendEmail(@RequestHeader(value = "Authorization") String token) {
         emailService.sendSimpleMessage("kovteba@gmail.com", "Test", "TEST TEXT");
@@ -105,25 +140,10 @@ public class UserController {
     }
 
     @GetMapping(
-            value = "/genRec/{userId}",
-            produces = MediaType.APPLICATION_PDF_VALUE)
-    public void generateReceipt(@RequestHeader(value = "Authorization") String token,
-                                @PathVariable Long userId,
-                                HttpServletResponse response) throws IOException {
-        UserEntity userEntity = (UserEntity) userService.getUserById(userId).getObject();
-        String fileName = generatePDF.generateDPF(userEntity.getBasket(), userEntity.getEmail());
-        File file = new File(directory + fileName);
-        InputStream targetStream = new DataInputStream(new FileInputStream(file));
-        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
-        IOUtils.copy(targetStream, response.getOutputStream());
-    }
-
-
-//    //////////////////////////////////////////////////////////////////////////
-    @GetMapping(
             value = "/pic",
             produces = MediaType.IMAGE_JPEG_VALUE)
-    public void getPic(HttpServletResponse response) throws IOException, DocumentException {
+    public void getPic(@RequestHeader(value = "Authorization") String token,
+                       HttpServletResponse response) throws IOException, DocumentException {
         File file = new File(directory + "IMG_1050.JPEG");
         InputStream targetStream = new DataInputStream(new FileInputStream(file));
         response.setContentType(MediaType.IMAGE_JPEG_VALUE);
@@ -133,7 +153,8 @@ public class UserController {
     @GetMapping(
             value = "/download",
             produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<ByteArrayResource> downloadByClick() throws IOException {
+    public ResponseEntity<ByteArrayResource> downloadByClick(@RequestHeader(value = "Authorization") String token)
+            throws IOException {
         UserEntity userEntity = (UserEntity) userService.getUserById(1L).getObject();
         String fileName = generatePDF.generateDPF(userEntity.getBasket(), userEntity.getEmail());
         Path path = Paths.get(directory + fileName);
@@ -149,7 +170,8 @@ public class UserController {
     @GetMapping(
             value = "/show",
             produces = MediaType.APPLICATION_PDF_VALUE)
-    public void showByClick(HttpServletResponse response) throws IOException, DocumentException {
+    public void showByClick(@RequestHeader(value = "Authorization") String token,
+                            HttpServletResponse response) throws IOException, DocumentException {
         UserEntity userEntity = (UserEntity) userService.getUserById(1L).getObject();
         String fileName = generatePDF.generateDPF(userEntity.getBasket(), userEntity.getEmail());
         File file = new File(directory + fileName);
