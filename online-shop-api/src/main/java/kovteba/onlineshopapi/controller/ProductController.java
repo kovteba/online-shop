@@ -6,24 +6,19 @@ import kovteba.onlineshopapi.responce.Responce;
 import kovteba.onlineshopapi.service.ProductService;
 import kovteba.onlineshopcommon.model.ProductInfo;
 import kovteba.onlineshopcommon.pojo.Product;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/product")
