@@ -38,7 +38,7 @@ public class ProductController {
         this.productMapper = productMapper;
     }
 
-    @PostMapping("/addNewProduct")
+    @PostMapping("/add")
     public ResponseEntity<Product> addNewProduct(@RequestHeader(value = "Authorization") String token,
                                                  @RequestBody Product product) {
         log.info("addNewProduct, " + this.getClass());
@@ -47,7 +47,7 @@ public class ProductController {
                 .body(productMapper.productEntityToProduct((ProductEntity) responce.getObject()));
     }
 
-    @GetMapping("/get/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@RequestHeader(value = "Authorization") String token,
                                                   @PathVariable Long id) {
         log.info("getProductById, " + this.getClass());
@@ -56,7 +56,7 @@ public class ProductController {
                 .body(productMapper.productEntityToProduct((ProductEntity) responce.getObject()));
     }
 
-    @PostMapping("/addInfo/{idProduct}")
+    @PostMapping("/info/{idProduct}")
     public ResponseEntity<Product> addInfoAboutProduct(@RequestHeader(value = "Authorization") String token,
                                                        @PathVariable Long idProduct,
                                                        @RequestBody ProductInfo productInfo) {
@@ -66,7 +66,7 @@ public class ProductController {
                 .body(productMapper.productEntityToProduct((ProductEntity) responce.getObject()));
     }
 
-    @PostMapping("/addPic/{idProduct}")
+    @PostMapping("/image/{idProduct}")
     public ResponseEntity<Product> addPicForProduct(@RequestHeader(value = "Authorization") String token,
                                                     @PathVariable Long idProduct,
                                                     @RequestParam("file") MultipartFile file) {
@@ -82,7 +82,7 @@ public class ProductController {
                 .body(productMapper.productEntityToProduct((ProductEntity) responce.getObject()));
     }
 
-    @PostMapping("/deletePic/{idProduct}")
+    @DeleteMapping("/{idProduct}/image")
     public ResponseEntity<Product> deletePicForProduct(@RequestHeader(value = "Authorization") String token,
                                                        @PathVariable Long idProduct,
                                                        @RequestBody String fileName) {

@@ -11,6 +11,7 @@ import kovteba.onlineshopapi.service.RecoveryService;
 import kovteba.onlineshopapi.service.UserService;
 import kovteba.onlineshopapi.util.JwtTokenUtil;
 import kovteba.onlineshopapi.util.UUIDRandom;
+import kovteba.onlineshopcommon.enums.RoleUser;
 import kovteba.onlineshopcommon.pojo.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,8 +73,9 @@ public class AuthenticationController {
     }
 
     @PostMapping(value = "/register")
-    public ResponseEntity<User> addNewUser(@RequestBody User user) {
+    public ResponseEntity<User> addNewUser(@RequestBody RegistrationForm registrationForm) {
         log.info("addNewUser, " + this.getClass());
+        User user = new User().installUser(registrationForm, RoleUser.USER);
         Responce responce = userService.addNewUser(userMapper.userToUserEntity(user));
         return ResponseEntity.status(responce.getStatus())
                 .body(userMapper.userEntityToUser((UserEntity) responce.getObject()));

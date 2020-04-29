@@ -18,7 +18,7 @@ public class ProductMapperImpl implements ProductMapper {
     @Override
     public Product productEntityToProduct(ProductEntity productEntity) {
         Product product = new Product();
-        product.setId(product.getId());
+        product.setId(productEntity.getId());
         product.setBrand(productEntity.getBrand());
         product.setModel(productEntity.getModel());
         product.setPrice(productEntity.getPrice());

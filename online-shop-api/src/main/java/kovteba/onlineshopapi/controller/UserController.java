@@ -1,11 +1,9 @@
 package kovteba.onlineshopapi.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import kovteba.onlineshopapi.entity.UserEntity;
 import kovteba.onlineshopapi.mapper.UserMapper;
 import kovteba.onlineshopapi.responce.Responce;
 import kovteba.onlineshopapi.service.BanService;
-import kovteba.onlineshopapi.service.EmailService;
 import kovteba.onlineshopapi.service.UserService;
 import kovteba.onlineshopapi.util.GeneratePDF;
 import kovteba.onlineshopapi.util.JwtTokenUtil;
@@ -43,7 +41,6 @@ public class UserController {
     public UserController(UserService userService,
                           JwtTokenUtil jwtTokenUtil,
                           GeneratePDF generatePDF,
-                          EmailService emailService,
                           UserMapper userMapper,
                           BanService banService) {
         this.userService = userService;
@@ -118,22 +115,12 @@ public class UserController {
     }
 
     @GetMapping("/email")
-    public String getUserByEmail(@RequestHeader(value = "Authorization") String token) throws IOException {
+    public ResponseEntity<User> getUserByEmail(@RequestHeader(value = "Authorization") String token) throws IOException {
         log.info("getUserByEmail, " + this.getClass());
         String email = jwtTokenUtil.getEmailFromToken(token);
         Responce responce = userService.getUserByEmail(email);
         User user = userMapper.userEntityToUser((UserEntity) responce.getObject());
-//        return ResponseEntity.status(responce.getStatus()).body(user);
-
-        StringWriter writer = new StringWriter();
-        //это объект Jackson, который выполняет сериализацию
-        ObjectMapper mapper = new ObjectMapper();
-        // сама сериализация: 1-куда, 2-что
-        mapper.writeValue(writer, user);
-        //преобразовываем все записанное во StringWriter в строку
-        String result = writer.toString();
-        return result;
-
+        return ResponseEntity.status(responce.getStatus()).body(user);
     }
 
 }

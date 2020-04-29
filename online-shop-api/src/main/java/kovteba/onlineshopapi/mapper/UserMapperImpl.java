@@ -26,8 +26,10 @@ public class UserMapperImpl implements UserMapper {
         user.setPhoneNumber(userEntity.getPhoneNumber());
         user.setPassword(userEntity.getPassword());
         Map<Product, String> basket = new HashMap<>();
-        for (Map.Entry<ProductEntity, String> entry : userEntity.getBasket().entrySet()){
-            basket.put(productMapper.productEntityToProduct(entry.getKey()), entry.getValue());
+        if (userEntity.getBasket() != null){
+            for (Map.Entry<ProductEntity, String> entry : userEntity.getBasket().entrySet()){
+                basket.put(productMapper.productEntityToProduct(entry.getKey()), entry.getValue());
+            }
         }
         user.setBasket(basket);
         user.setRoleUser(userEntity.getRoleUser());
@@ -44,8 +46,10 @@ public class UserMapperImpl implements UserMapper {
         userEntity.setPhoneNumber(user.getPhoneNumber());
         userEntity.setPassword(user.getPassword());
         Map<ProductEntity, String> basket = new HashMap<>();
-        for (Map.Entry<Product, String> entry : user.getBasket().entrySet()){
-            basket.put(productMapper.productToProductEntity(entry.getKey()), entry.getValue());
+        if (user.getBasket() != null){
+            for (Map.Entry<Product, String> entry : user.getBasket().entrySet()){
+                basket.put(productMapper.productToProductEntity(entry.getKey()), entry.getValue());
+            }
         }
         userEntity.setBasket(basket);
         userEntity.setRoleUser(user.getRoleUser());
