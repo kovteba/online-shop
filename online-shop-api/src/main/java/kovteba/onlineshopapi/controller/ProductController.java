@@ -87,44 +87,17 @@ public class ProductController {
                 .body(productMapper.productEntityToProduct((ProductEntity) responce.getObject()));
     }
 
-    @GetMapping("/deletePic/{idProduct}")
+    @PostMapping("/deletePic/{idProduct}")
     public ResponseEntity<Product> deletePicForProduct(@RequestHeader(value = "Authorization") String token,
                                                        @PathVariable Long idProduct,
                                                        @RequestBody String fileName) {
         Responce responce = productService.deletePicForProduct(idProduct, fileName);
+        if (responce.getObject() != null){
+            File file = new File(directory + fileName);
+            file.delete();
+        }
         return ResponseEntity.status(responce.getStatus())
                 .body(productMapper.productEntityToProduct((ProductEntity) responce.getObject()));
     }
 
-
-    ///////////////////////
-    @GetMapping(
-            value = "/pic/{idProduct}",
-            produces = MediaType.IMAGE_JPEG_VALUE)
-    public void getPic(@RequestHeader(value = "Authorization") String token,
-                       @PathVariable Long idProduct,
-                       HttpServletResponse response) throws IOException {
-
-        ProductEntity productEntity = (ProductEntity) productService.getProductById(idProduct).getObject();
-//        File file = new File(directory + "IMG_1050.JPEG");
-//        InputStream targetStream = new DataInputStream(new FileInputStream(file));
-//        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-//        IOUtils.copy(targetStream, response.getOutputStream());
-
-        List<String> listPic = productEntity.getListPic();
-        List<File> pic = new ArrayList<>();
-        for (String s : listPic) {
-            pic.add(new File(directory + s));
-        }
-
-        InputStream[] targetStream = new InputStream[listPic.size()];
-        for (int i = 0; i < listPic.size(); i++) {
-            File file = new File(directory + listPic.get(i));
-            targetStream[i] = new DataInputStream(new FileInputStream(file));
-            response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-        }
-        for (InputStream inputStream : targetStream) {
-            IOUtils.copy(inputStream, response.getOutputStream());
-        }
-    }
 }
