@@ -5,6 +5,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import kovteba.onlineshopapi.entity.ProductEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.FileNotFoundException;
@@ -17,11 +18,8 @@ public class GeneratePDF {
 
     private static Long totalPrice = 0L;
 
-//    @Value("${online.out.storage.pdf}")
-//    public String out;
-
-//    public static String out = "online-shop-api/src/main/resources/pdf/";
-    public static String out = "files/";
+    @Value("${online.out.storage.pdf}")
+    public String out;
 
     public String generateDPF(Map<ProductEntity, String> basket, String email){
         Document document = new Document();

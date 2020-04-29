@@ -82,7 +82,7 @@ public class ProductController {
                 .body(productMapper.productEntityToProduct((ProductEntity) responce.getObject()));
     }
 
-    @DeleteMapping("/{idProduct}/image")
+    @DeleteMapping("/file/{idProduct}")
     public ResponseEntity<Product> deletePicForProduct(@RequestHeader(value = "Authorization") String token,
                                                        @PathVariable Long idProduct,
                                                        @RequestBody String fileName) {

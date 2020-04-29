@@ -74,32 +74,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.js"
                 ).permitAll()
 
-                .antMatchers("/product/addNewProduct").hasRole("ADMIN")
-                .antMatchers("/product/get/**").hasRole("ADMIN")
-                .antMatchers("/product/addInfo/*").hasRole("ADMIN")
-                .antMatchers("/product/addPic/*").hasRole("ADMIN")
-                .antMatchers("/product/deletePic/*").hasRole("ADMIN")
-                .antMatchers("/product/pic/*").hasRole("ADMIN")
+                .antMatchers("/product/add").hasRole("ADMIN")
+                .antMatchers("/product/**").hasRole("ADMIN")
+                .antMatchers("/product/info/*").hasRole("ADMIN")
+                .antMatchers("/product/image/*").hasRole("ADMIN")
+                .antMatchers("/product/file/*").hasRole("ADMIN")
                 .antMatchers("/product/").hasRole("ADMIN")
 
                 .antMatchers("/user/role/*").hasRole("ADMIN")
                 .antMatchers("/user/phone/*").hasRole("ADMIN")
-                .antMatchers("/user/email/*").hasRole("ADMIN")
                 .antMatchers("/user/ban/*").hasRole("ADMIN")
                 .antMatchers("/user/unBan/*").hasRole("ADMIN")
+                .antMatchers("/user/email/*").hasRole("ADMIN")
 
-
-                .antMatchers("/product/get/*").hasRole("USER")
-                .antMatchers("/product/pic/*").hasRole("USER")
+                .antMatchers("/product/*").hasRole("USER")
                 .antMatchers("/user/basket/*").hasRole("USER")
                 .antMatchers("/user/genRec/*").hasRole("USER")
-
-                //test
-                .antMatchers("/private").hasRole("ADMIN")
-                .antMatchers("/user/pic").permitAll()
-                .antMatchers("/user/download").permitAll()
-                .antMatchers("/user/show").permitAll()
-                .antMatchers("/user/sendEmail").permitAll()
 
                 .anyRequest()
                 .authenticated();
