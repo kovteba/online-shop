@@ -48,7 +48,7 @@ public class ProductServiceImpl implements ProductService {
             responce.setObject(productRepository.save(productEntity));
         } else {
             responce.setStatus(HttpStatus.BAD_REQUEST);
-            responce.setObject("PRODUCT WITH " + id + " NOT FOUND");
+            responce.setObject(null);
         }
         return responce;
     }
@@ -65,7 +65,7 @@ public class ProductServiceImpl implements ProductService {
             responce.setObject(productRepository.save(productEntity));
         } else {
             responce.setStatus(HttpStatus.BAD_REQUEST);
-            responce.setObject("PRODUCT WITH " + id + " NOT FOUND");
+            responce.setObject(null);
         }
         return responce;
     }
@@ -82,7 +82,7 @@ public class ProductServiceImpl implements ProductService {
             responce.setObject(productRepository.save(productEntity));
         } else {
             responce.setStatus(HttpStatus.BAD_REQUEST);
-            responce.setObject("PRODUCT WITH " + id + " NOT FOUND");
+            responce.setObject(null);
         }
         return responce;
     }
