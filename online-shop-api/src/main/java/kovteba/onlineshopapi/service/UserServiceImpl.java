@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,7 +54,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Responce getUserByRole(RoleUser roleUser) {
         Responce responce = new Responce();
-        UserEntity userEntity = userRepository.findByRoleUser(roleUser);
+        List<UserEntity> userEntity = userRepository.findByRoleUser(roleUser);
         if (userEntity != null) {
             responce.setStatus(HttpStatus.OK);
             responce.setObject(userEntity);
@@ -113,8 +114,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Responce updateUserByEmail(String email, UserEntity userEntity) {
-
-        return null;
+        Responce responce = new Responce();
+        UserEntity userEntityDB = userRepository.findByEmail(email);
+        if (userEntityDB != null){
+            responce.setStatus(HttpStatus.OK);
+            responce.setObject(userRepository.save(userEntity));
+        } else {
+            responce.setStatus(HttpStatus.BAD_REQUEST);
+            responce.setObject(null);
+        }
+        return responce;
     }
 
     @Override
