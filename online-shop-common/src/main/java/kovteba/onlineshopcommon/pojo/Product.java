@@ -3,7 +3,9 @@ package kovteba.onlineshopcommon.pojo;
 
 import kovteba.onlineshopcommon.enums.ProductType;
 import lombok.*;
+import org.apache.pulsar.shade.com.fasterxml.jackson.annotation.JsonAutoDetect;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +15,7 @@ import java.util.Map;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonAutoDetect
 public class Product {
 
     private Long id;
@@ -25,26 +28,12 @@ public class Product {
 
     private String ean;
 
-    private List<String> listPic;
+    private List<File> listPic;
 
     private Map<String, String> productInfo;
 
     private ProductType productType;
 
-    public Product(String brand,
-                   String model,
-                   Long price,
-                   String ean,
-                   List<String> listPic,
-                   Map<String, String> productInfo,
-                   ProductType productType) {
-        this.brand = brand;
-        this.model = model;
-        this.price = price;
-        this.ean = ean;
-        this.listPic = listPic;
-        this.productInfo = productInfo;
-        this.productType = productType;
-    }
+
 
 }

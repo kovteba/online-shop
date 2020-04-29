@@ -15,6 +15,7 @@ import kovteba.onlineshopcommon.pojo.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -70,7 +71,7 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("YOU BLOCKED");
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @PostMapping(value = "/register")
     public ResponseEntity<User> addNewUser(@RequestBody User user) {
         log.info("addNewUser, " + this.getClass());
         Responce responce = userService.addNewUser(userMapper.userToUserEntity(user));

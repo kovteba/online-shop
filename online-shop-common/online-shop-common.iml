@@ -12,5 +12,14 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.projectlombok:lombok:1.18.10" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.pulsar:pulsar-client:2.1.1-incubating" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.pulsar:protobuf-shaded:2.1.1-incubating" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.pulsar:pulsar-client-schema:2.1.1-incubating" level="project" />
+    <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java:3.5.1" level="project" />
+    <orderEntry type="library" name="Maven: javax.validation:validation-api:1.1.0.Final" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.pulsar:pulsar-functions-api:2.1.1-incubating" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.25" level="project" />
+    <orderEntry type="library" name="Maven: org.bouncycastle:bcpkix-jdk15on:1.55" level="project" />
+    <orderEntry type="library" name="Maven: org.bouncycastle:bcprov-jdk15on:1.55" level="project" />
   </component>
 </module>
