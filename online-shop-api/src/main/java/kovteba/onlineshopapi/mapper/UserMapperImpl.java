@@ -5,7 +5,6 @@ import kovteba.onlineshopapi.entity.UserEntity;
 import kovteba.onlineshopcommon.pojo.Product;
 import kovteba.onlineshopcommon.pojo.User;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -15,7 +14,6 @@ import java.util.Map;
 @AllArgsConstructor
 public class UserMapperImpl implements UserMapper {
 
-    @Autowired
     private final ProductMapper productMapper;
 
     @Override
