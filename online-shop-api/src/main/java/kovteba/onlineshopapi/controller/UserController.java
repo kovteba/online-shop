@@ -1,6 +1,6 @@
 package kovteba.onlineshopapi.controller;
 
-import com.itextpdf.text.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kovteba.onlineshopapi.entity.UserEntity;
 import kovteba.onlineshopapi.mapper.UserMapper;
 import kovteba.onlineshopapi.responce.Responce;
@@ -15,18 +15,14 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.*;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -41,7 +37,6 @@ public class UserController {
     private final UserService userService;
     private final JwtTokenUtil jwtTokenUtil;
     private final GeneratePDF generatePDF;
-    private final EmailService emailService;
     private final UserMapper userMapper;
     private final BanService banService;
 
@@ -54,18 +49,20 @@ public class UserController {
         this.userService = userService;
         this.jwtTokenUtil = jwtTokenUtil;
         this.generatePDF = generatePDF;
-        this.emailService = emailService;
         this.userMapper = userMapper;
         this.banService = banService;
     }
 
     @GetMapping("/role")
-    public ResponseEntity<User> getUserByRole(@RequestHeader(value = "Authorization") String token,
-                                              @RequestBody String roleUser) {
+    public ResponseEntity<List<User>> getUserByRole(@RequestHeader(value = "Authorization") String token,
+                                                    @RequestHeader String roleUser) {
         log.info("getUserByRole, " + this.getClass());
         Responce responce = userService.getUserByRole(RoleUser.findRole(roleUser));
+        List<User> users = ((List<UserEntity>) responce.getObject())
+                .stream()
+                .map(userMapper::userEntityToUser).collect(Collectors.toList());
         return ResponseEntity.status(responce.getStatus())
-                .body(userMapper.userEntityToUser((UserEntity) responce.getObject()));
+                .body(users);
     }
 
     @PostMapping("/phone")
@@ -76,15 +73,6 @@ public class UserController {
         System.out.println(responce.getObject());
         return ResponseEntity.status(responce.getStatus())
                 .body(userMapper.userEntityToUser((UserEntity) responce.getObject()));
-    }
-
-    @GetMapping("/email")
-    public ResponseEntity<User> getUserByEmail(@RequestHeader(value = "Authorization") String token) {
-        log.info("getUserByEmail, " + this.getClass());
-        String email = jwtTokenUtil.getEmailFromToken(token);
-        Responce responce = userService.getUserByEmail(email);
-        User user = userMapper.userEntityToUser((UserEntity) responce.getObject());
-        return ResponseEntity.status(responce.getStatus()).body(user);
     }
 
     @PostMapping("/basket/{userId}/{productId}")
@@ -106,7 +94,7 @@ public class UserController {
                                 HttpServletResponse response) throws IOException {
         String email = jwtTokenUtil.getEmailFromToken(token);
         UserEntity userEntity = (UserEntity) userService.getUserById(userId).getObject();
-        if (userEntity != null && email.equals(userEntity.getEmail())){
+        if (userEntity != null && email.equals(userEntity.getEmail())) {
             String fileName = generatePDF.generateDPF(userEntity.getBasket(), userEntity.getEmail());
             File file = new File(directory + fileName);
             InputStream targetStream = new DataInputStream(new FileInputStream(file));
@@ -117,67 +105,35 @@ public class UserController {
 
     @GetMapping("/ban/{email}")
     public ResponseEntity<?> banUserByEmail(@RequestHeader(value = "Authorization") String token,
-                               @PathVariable String email){
-        Responce responce = banService.banUserByEmail(email);;
+                                            @PathVariable String email) {
+        Responce responce = banService.banUserByEmail(email);
         return ResponseEntity.status(responce.getStatus()).body(responce.getObject());
     }
 
     @GetMapping("/unBan/{email}")
     public ResponseEntity<?> unBanUserByEmail(@RequestHeader(value = "Authorization") String token,
-                                 @PathVariable String email){
+                                              @PathVariable String email) {
         Responce responce = banService.unBanUserByEmail(email);
         return ResponseEntity.status(responce.getStatus()).body(responce.getObject());
     }
 
+    @GetMapping("/email")
+    public String getUserByEmail(@RequestHeader(value = "Authorization") String token) throws IOException {
+        log.info("getUserByEmail, " + this.getClass());
+        String email = jwtTokenUtil.getEmailFromToken(token);
+        Responce responce = userService.getUserByEmail(email);
+        User user = userMapper.userEntityToUser((UserEntity) responce.getObject());
+//        return ResponseEntity.status(responce.getStatus()).body(user);
 
+        StringWriter writer = new StringWriter();
+        //это объект Jackson, который выполняет сериализацию
+        ObjectMapper mapper = new ObjectMapper();
+        // сама сериализация: 1-куда, 2-что
+        mapper.writeValue(writer, user);
+        //преобразовываем все записанное во StringWriter в строку
+        String result = writer.toString();
+        return result;
 
-    ////////////////////////////////////////////////////////////////////////////
-
-    @GetMapping("/sendEmail")
-    public ResponseEntity<String> sendEmail(@RequestHeader(value = "Authorization") String token) {
-        emailService.sendSimpleMessage("kovteba@gmail.com", "Test", "TEST TEXT");
-        return ResponseEntity.status(HttpStatus.CREATED).body("CREATE SECRET TOKEN");
-    }
-
-    @GetMapping(
-            value = "/pic",
-            produces = MediaType.IMAGE_JPEG_VALUE)
-    public void getPic(@RequestHeader(value = "Authorization") String token,
-                       HttpServletResponse response) throws IOException, DocumentException {
-        File file = new File(directory + "IMG_1050.JPEG");
-        InputStream targetStream = new DataInputStream(new FileInputStream(file));
-        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-        IOUtils.copy(targetStream, response.getOutputStream());
-    }
-
-    @GetMapping(
-            value = "/download",
-            produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<ByteArrayResource> downloadByClick(@RequestHeader(value = "Authorization") String token)
-            throws IOException {
-        UserEntity userEntity = (UserEntity) userService.getUserById(1L).getObject();
-        String fileName = generatePDF.generateDPF(userEntity.getBasket(), userEntity.getEmail());
-        Path path = Paths.get(directory + fileName);
-        byte[] data = Files.readAllBytes(path);
-        ByteArrayResource resource = new ByteArrayResource(data);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + path.getFileName().toString())
-                .contentType(MediaType.APPLICATION_PDF)
-                .contentLength(data.length)
-                .body(resource);
-    }
-
-    @GetMapping(
-            value = "/show",
-            produces = MediaType.APPLICATION_PDF_VALUE)
-    public void showByClick(@RequestHeader(value = "Authorization") String token,
-                            HttpServletResponse response) throws IOException, DocumentException {
-        UserEntity userEntity = (UserEntity) userService.getUserById(1L).getObject();
-        String fileName = generatePDF.generateDPF(userEntity.getBasket(), userEntity.getEmail());
-        File file = new File(directory + fileName);
-        InputStream targetStream = new DataInputStream(new FileInputStream(file));
-        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
-        IOUtils.copy(targetStream, response.getOutputStream());
     }
 
 }
