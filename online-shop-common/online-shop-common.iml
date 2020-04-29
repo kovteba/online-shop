@@ -12,6 +12,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.projectlombok:lombok:1.18.10" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.10.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.pulsar:pulsar-client:2.1.1-incubating" level="project" />
     <orderEntry type="library" name="Maven: org.apache.pulsar:protobuf-shaded:2.1.1-incubating" level="project" />
     <orderEntry type="library" name="Maven: org.apache.pulsar:pulsar-client-schema:2.1.1-incubating" level="project" />

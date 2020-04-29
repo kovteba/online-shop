@@ -1,12 +1,14 @@
 package kovteba.onlineshopcommon.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import kovteba.onlineshopcommon.enums.RoleUser;
 
 import java.util.Map;
 
+import kovteba.onlineshopcommon.model.RegistrationForm;
 import lombok.*;
-import org.apache.pulsar.shade.com.fasterxml.jackson.annotation.JsonAutoDetect;
-import org.apache.pulsar.shade.com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @Getter
 @Setter
@@ -14,7 +16,7 @@ import org.apache.pulsar.shade.com.fasterxml.jackson.annotation.JsonIgnore;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonAutoDetect
+@JsonFormat
 public class User {
 
     private Long id;
@@ -33,6 +35,14 @@ public class User {
 
     private Map<Product, String> basket;
 
-
-
+    public User installUser(RegistrationForm registrationForm, RoleUser roleUser){
+        User user = new User();
+        user.setFirstName(registrationForm.getFirstName());
+        user.setLastName(registrationForm.getLastName());
+        user.setEmail(registrationForm.getEmail());
+        user.setPassword(registrationForm.getPassword());
+        user.setPhoneNumber(registrationForm.getPhoneNumber());
+        user.setRoleUser(roleUser);
+        return user;
+    }
 }
