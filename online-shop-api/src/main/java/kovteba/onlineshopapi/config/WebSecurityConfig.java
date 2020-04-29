@@ -58,6 +58,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/resetPass").permitAll()
                 .antMatchers("/createSecretToken").permitAll()
                 .antMatchers("/authenticate").permitAll()
+                .antMatchers("http://localhost:8080").permitAll()
 
                 .antMatchers(
                         HttpMethod.GET,
