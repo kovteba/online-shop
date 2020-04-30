@@ -1,7 +1,6 @@
 package kovteba.onlineshopcommon.pojo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import kovteba.onlineshopcommon.enums.RoleUser;
 
 import java.util.Map;
@@ -16,7 +15,6 @@ import lombok.*;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonFormat
 public class User {
 
     private Long id;

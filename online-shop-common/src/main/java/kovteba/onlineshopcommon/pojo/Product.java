@@ -1,8 +1,6 @@
 package kovteba.onlineshopcommon.pojo;
 
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import kovteba.onlineshopcommon.enums.ProductType;
 import lombok.*;
 
@@ -16,7 +14,6 @@ import java.util.Map;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonFormat
 public class Product {
 
     private Long id;
